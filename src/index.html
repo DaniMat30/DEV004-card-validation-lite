@@ -7,78 +7,74 @@
 </head>
 
 <body>
-  <input id="cardnumber"></input>
-  <input type="submit" value="Validar" id="submitBtn"> </input>
+  <input  type="text" id="inputdondepondreelnumerodetarjeta"></input>
+  <input type="button" value="Validar tarjeta" onclick="Validate()" />
   <div id="result"></div>
 
 
-  <script>
-    var userNumInput = document.getElementById("cardnumber");
+  <script lang="javascript">
 
-    function getUserInput() {
-      return userNumInput.value;
+    function Validate() {
+      //1-La función "Validate()" comienza obteniendo el valor del elemento HTML con el ID "inputdondepondreelnumerodetarjeta"...
+      //... mediante el método getElementById() de JavaScript. El valor obtenido es el número de tarjeta de crédito que el usuario ha ingresado en un campo de entrada
+      //2-A continuación, la función llama a otra función llamada "isValid()" y le pasa el número de tarjeta de crédito como argumento...
+      //3-La función "isValid()" comprueba si el número de tarjeta de crédito es válido y devuelve un valor booleano...
+      //...true o false en función de si el número de tarjeta es válido o no.
+      //4.La función Validate() almacena el valor devuelto por la función isValid() en una constante llamada "valid"
+      //5-  Si el valor es true, significa que el número de tarjeta de crédito es válido y la función realiza una serie de acciones adicionales. 
+      //6-Si el valor es false, significa que el número de tarjeta de crédito no es válido y la función realiza otras acciones.
+      //7-La función "isValid() es la encargada de verificar si el número de tarjeta de crédito es válido o no...
+      //...Sin embargo "isValid()" , esta función no se ha implementado en el código proporcionado,...
+      //.. por lo que no podemos saber exactamente cómo se valida el número de tarjeta de crédito.
+
+
+
+      const valid = isValid(document.getElementById("inputdondepondreelnumerodetarjeta").value)
+      //Este código utiliza la función isValid() para validar un número de tarjeta de crédito ingresado por el usuario en un campo de entrada de un formulario HTML
+      //1- document.getElementById("inputdondepondreelnumerodetarjeta").value: Esto obtiene el valor del campo de entrada donde se espera que el usuario ingrese el número de tarjeta de crédito
+      //... El getElementById() es un método de JavaScript que busca un elemento en el documento HTML utilizando el valor del atributo "id" del elemento.
+      if (valid) {
+
+        document.getElementById("result").innerHTML = "El número de tarjeta de crédito es válido";
+
+
+        //show succes in div#result?
+
+
+      }
+      else {
+        document.getElementById("result").innerHTML = "El número de tarjeta de crédito no es válido";
+
+
+      }
+
     }
 
-    function luhnCheck() {
-      var ccNum = getUserInput(),
-        ccNumSplit = ccNum.split(""),
-        sum = 0;
-      var singleNums = [],
-        doubleNums = [],
-        finalArry = undefined;
-      var validCard = false;
+    function isValid(creditCardNumber) {
+      //is creditCardNumber valid?
 
-      if (!/\d{15,16}(~\W[a-zA-Z])*$/g.test(ccNum) || ccNum.length > 16) {
-        return false;
-      }
-
-      if (ccNum.length === 15) {
-        //american express
-        for (var i = ccNumSplit.length - 1; i >= 0; i--) {
-          if (i % 2 === 0) {
-            singleNums.push(ccNumSplit[i]);
-          } else {
-            doubleNums.push((ccNumSplit[i] * 2).toString());
+      let sum = 0;
+      let shouldDouble = false;
+      for (let i = creditCardNumber.length - 1; i >= 0; i--) {
+        let digit = parseInt(creditCardNumber.charAt(i));
+        if (shouldDouble) {
+          digit *= 2;
+          if (digit > 9) {
+            digit -= 9;
           }
         }
-      } else if (ccNum.length === 16) {
-        for (var i = ccNumSplit.length - 1; i >= 0; i--) {
-          if (i % 2 !== 0) {
-            singleNums.push(ccNumSplit[i]);
-          } else {
-            doubleNums.push((ccNumSplit[i] * 2).toString());
-          }
-        }
+        sum += digit;
+        shouldDouble = !shouldDouble;
       }
-      //joining makes an array to a string and I split them up again
-      //so that every number is a single digit and convert back to array
+      return (sum % 10 == 0);
 
-      doubleNums = doubleNums.join("").split("");
-      finalArry = doubleNums.concat(singleNums);
 
-      for (var j = 0; j < finalArry.length; j++) {
-        sum += parseInt(finalArry[j]);
-      }
 
-      if (sum % 10 === 0) {
-        validCard = true;
-      }
-      //the console log is for you, so you can see the sum, all sums that are
-      //divisible by 10 should be good.  Just open up your console to view.
 
-      console.log(sum);
-      return validCard;
+
     }
 
-    function whatCard() { }
 
-    document.getElementById("submitBtn").addEventListener(
-      "click",
-      function () {
-        document.getElementById("result").innerHTML = luhnCheck();
-      },
-      false
-    );
 
   </script>
 </body>
